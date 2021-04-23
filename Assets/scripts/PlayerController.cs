@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask ground;
     [SerializeField] private Text tPoints;
     [SerializeField] private Text tHP;
+    [SerializeField] private Text tMultiplier;
 
     private enum State { idle, running, jumping, falling, hurt, death };
     private State state = State.idle;
@@ -27,7 +28,10 @@ public class PlayerController : MonoBehaviour
     private float jumpForce = 18f;
     private float hurtForce = 10f;
     private int ects;
+    private int pointValue = 1;
+    private int pointMultiplier = 1;
     private int health;
+    private float powerUpDuration = 8f;
 
     private Vector2 spawnPoint = new Vector2(-13.12f, 0.320726f);
 
@@ -63,7 +67,8 @@ public class PlayerController : MonoBehaviour
         if (other.tag == "collectable")
         {
             Destroy(other.gameObject); //usuniecie obiektu
-            ++ects; //dodanie punktu
+            //++ects; //dodanie punktu
+            ects = ects + pointValue * pointMultiplier; // dodanie punktu
             point.Play(); //odtworzenie dzwieku
             UpdateStatusBar(); //aktualizacja UI
         }
@@ -85,6 +90,13 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "checkpoint")
         {
             cp.SaveGame();
+        }
+
+        //kolizja z obiektem z tagiem "powerup"
+        if (other.gameObject.tag == "powerup")
+        {
+            Destroy(other.gameObject); //usuniecie obiektu
+            StartCoroutine(IPowerUp());
         }
     }
 
@@ -193,6 +205,7 @@ public class PlayerController : MonoBehaviour
             tHP.text += "♥ ";
         }
         tPoints.text = ects.ToString();
+        tMultiplier.text = "x" + pointMultiplier.ToString(); 
     }
 
     public void Damage(int hp)
@@ -219,6 +232,18 @@ public class PlayerController : MonoBehaviour
             
             cp.LoadGame();
         }
+    }
+
+    IEnumerator IPowerUp()
+    {
+        pointMultiplier = 2; //ustawienie mnoznika punktow
+        UpdateStatusBar(); //aktualizacja UI
+
+        //mnoznik punktow jest aktywny okreslona ilosc sekund (zmienna "powerUpDuration")
+        yield return new WaitForSeconds(powerUpDuration);
+
+        pointMultiplier = 1; //powrot do poprzedniej wartosci
+        UpdateStatusBar(); //aktualizacja UI
     }
 
     public void setState(int s)

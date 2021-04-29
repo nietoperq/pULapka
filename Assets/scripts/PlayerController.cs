@@ -9,13 +9,15 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
     private Collider2D coll;
-    public Checkpoint cp;
+    private Checkpoint cp;
 
-    [SerializeField] private AudioSource point;
-    [SerializeField] private AudioSource footstep;
-    [SerializeField] private AudioSource hurt;
-    [SerializeField] private AudioSource jump;
-    [SerializeField] private AudioSource hpotion;
+    [SerializeField] private AudioSource soundPoint;
+    [SerializeField] private AudioSource soundFootstep;
+    [SerializeField] private AudioSource soundHurt;
+    [SerializeField] private AudioSource soundJump;
+    [SerializeField] private AudioSource soundHPotion;
+    [SerializeField] private AudioSource soundPowerUp;
+    [SerializeField] private AudioSource soundCheckpoint;
     [SerializeField] private LayerMask ground;
     [SerializeField] private Text tPoints;
     [SerializeField] private Text tHP;
@@ -68,7 +70,7 @@ public class PlayerController : MonoBehaviour
             Destroy(other.gameObject); //usuniecie obiektu
             //++ects; //dodanie punktu
             ects = ects + pointValue * pointMultiplier; // dodanie punktu
-            point.Play(); //odtworzenie dzwieku
+            soundPoint.Play(); //odtworzenie dzwieku
             UpdateStatusBar(); //aktualizacja UI
         }
 
@@ -80,7 +82,7 @@ public class PlayerController : MonoBehaviour
             {
                 health = 5; //odnowienie zycia
                 UpdateStatusBar(); //aktualizacja UI
-                hpotion.Play(); //odtworzenie dzwieku
+                soundHPotion.Play(); //odtworzenie dzwieku
                 Destroy(other.gameObject); //usuniecie obiektu
             }
         }
@@ -88,6 +90,7 @@ public class PlayerController : MonoBehaviour
         //kolizja z obiektem z tagiem "checkpoint"
         if (other.gameObject.tag == "checkpoint")
         {
+            soundCheckpoint.Play();
             other.GetComponent<Animator>().SetTrigger("saved");
            cp.SaveGame();
         }
@@ -96,6 +99,7 @@ public class PlayerController : MonoBehaviour
         if (other.gameObject.tag == "powerup")
         {
             Destroy(other.gameObject); //usuniecie obiektu
+            soundPowerUp.Play();
             StartCoroutine(IPowerUp());
         }
     }
@@ -156,7 +160,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
-        jump.Play();
+        soundJump.Play();
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         state = State.jumping;
     }
@@ -263,12 +267,12 @@ public class PlayerController : MonoBehaviour
     //metody odtwarzające dźwięki używane w eventach animacji
     private void FootstepSound()
     {
-        footstep.Play();
+        soundFootstep.Play();
     }
 
     private void HurtSound()
     {
-        hurt.Play();
+        soundHurt.Play();
     }
 
 }

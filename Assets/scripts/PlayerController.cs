@@ -43,8 +43,6 @@ public class PlayerController : MonoBehaviour
         coll = GetComponent<Collider2D>();
         cp = GetComponent<Checkpoint>();
 
-        cp.LoadGame();
-        Debug.Log("Loading game at start");
         health = PlayerPrefs.GetInt("health", 5);
         ects = PlayerPrefs.GetInt("ects", 0);
         UpdateStatusBar();
@@ -89,7 +87,8 @@ public class PlayerController : MonoBehaviour
         //kolizja z obiektem z tagiem "checkpoint"
         if (other.gameObject.tag == "checkpoint")
         {
-            cp.SaveGame();
+            other.GetComponent<Checkpoint>().SaveAnimation();
+            other.GetComponent<Checkpoint>().SaveGame();
         }
 
         //kolizja z obiektem z tagiem "powerup"

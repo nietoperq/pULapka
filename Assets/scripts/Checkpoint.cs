@@ -5,6 +5,19 @@ using UnityEngine;
 public class Checkpoint : MonoBehaviour
 {
     private object[] obj = { };
+    private Animator anim;
+    public GameObject player;
+
+    private void Start()
+    {
+        LoadGame();
+        anim = GetComponent<Animator>();
+    }
+
+    public void SaveAnimation()
+    {
+        anim.SetTrigger("saved");
+    }
 
     public void SaveGame()
     {
@@ -20,7 +33,7 @@ public class Checkpoint : MonoBehaviour
             GameObject g = (GameObject)o;
             if (g.activeInHierarchy)
             {
-                if (g.tag == "collectable" || g.tag == "enemy" || g.tag == "healthpotion")
+                if (g.tag == "collectable" || g.tag == "enemy" || g.tag == "healthpotion" || g.tag == "powerup")
                 {
                     //zapisywanie obiektow 
                     PlayerPrefs.SetInt(g.name, 1);
@@ -34,8 +47,8 @@ public class Checkpoint : MonoBehaviour
             }
         }
         //zapis zycia i punktow
-        PlayerPrefs.SetInt("health", this.GetComponent<PlayerController>().getHealth());
-        PlayerPrefs.SetInt("ects", this.GetComponent<PlayerController>().getECTS());
+        PlayerPrefs.SetInt("health", player.GetComponent<PlayerController>().getHealth());
+        PlayerPrefs.SetInt("ects", player.GetComponent<PlayerController>().getECTS());
     }
 
     public void LoadGame()
@@ -47,7 +60,7 @@ public class Checkpoint : MonoBehaviour
             {
                 GameObject g = (GameObject)o;
 
-                if (g.tag == "collectable" || g.tag == "enemy" || g.tag == "healthpotion")
+                if (g.tag == "collectable" || g.tag == "enemy" || g.tag == "healthpotion" || g.tag == "powerup")
                 {
                     if (!PlayerPrefs.HasKey(g.name))
                     {

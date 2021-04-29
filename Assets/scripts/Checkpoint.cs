@@ -5,20 +5,8 @@ using UnityEngine;
 public class Checkpoint : MonoBehaviour
 {
     private object[] obj = { };
-    private Animator anim;
-    public GameObject player;
 
-    private void Start()
-    {
-        LoadGame();
-        anim = GetComponent<Animator>();
-    }
-
-    public void SaveAnimation()
-    {
-        anim.SetTrigger("saved");
-    }
-
+  
     public void SaveGame()
     {
         PlayerPrefs.DeleteAll();
@@ -47,8 +35,8 @@ public class Checkpoint : MonoBehaviour
             }
         }
         //zapis zycia i punktow
-        PlayerPrefs.SetInt("health", player.GetComponent<PlayerController>().getHealth());
-        PlayerPrefs.SetInt("ects", player.GetComponent<PlayerController>().getECTS());
+        PlayerPrefs.SetInt("health", this.GetComponent<PlayerController>().getHealth());
+        PlayerPrefs.SetInt("ects", this.GetComponent<PlayerController>().getECTS());
     }
 
     public void LoadGame()

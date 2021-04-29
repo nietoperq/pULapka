@@ -9,7 +9,7 @@ public class PlayerController : MonoBehaviour
     private Rigidbody2D rb;
     private Animator anim;
     private Collider2D coll;
-    private Checkpoint cp;
+    public Checkpoint cp;
 
     [SerializeField] private AudioSource point;
     [SerializeField] private AudioSource footstep;
@@ -43,6 +43,7 @@ public class PlayerController : MonoBehaviour
         coll = GetComponent<Collider2D>();
         cp = GetComponent<Checkpoint>();
 
+        cp.LoadGame();
         health = PlayerPrefs.GetInt("health", 5);
         ects = PlayerPrefs.GetInt("ects", 0);
         UpdateStatusBar();
@@ -87,8 +88,8 @@ public class PlayerController : MonoBehaviour
         //kolizja z obiektem z tagiem "checkpoint"
         if (other.gameObject.tag == "checkpoint")
         {
-            other.GetComponent<Checkpoint>().SaveAnimation();
-            other.GetComponent<Checkpoint>().SaveGame();
+            other.GetComponent<Animator>().SetTrigger("saved");
+           cp.SaveGame();
         }
 
         //kolizja z obiektem z tagiem "powerup"

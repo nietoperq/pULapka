@@ -19,6 +19,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private AudioSource soundPowerUp;
     [SerializeField] private AudioSource soundCheckpoint;
     [SerializeField] private LayerMask ground;
+    [SerializeField] private LayerMask paperplane;
     [SerializeField] private Text tPoints;
     [SerializeField] private Text tHP;
     [SerializeField] private Text tMultiplier;
@@ -179,7 +180,7 @@ public class PlayerController : MonoBehaviour
             transform.localScale = new Vector2(1, 1);
         }
 
-        if (Input.GetButtonDown("Jump") && coll.IsTouchingLayers(ground))
+        if (Input.GetButtonDown("Jump") && (coll.IsTouchingLayers(ground)|| coll.IsTouchingLayers(paperplane)))
         {
             Jump();
         }
@@ -224,7 +225,7 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Recover()
     {
-        yield return new WaitForSeconds(1);
+        yield return new WaitForSeconds(0.5f);
         state = State.idle;
     }
 

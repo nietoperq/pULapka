@@ -34,6 +34,7 @@ public class PlayerController : MonoBehaviour
     private int pointMultiplier = 1;
     private int health;
     private float powerUpDuration = 8f;
+    private bool immortal = false; //niesmiertelnosc - domyslnie wylaczona
 
     private Vector2 spawnPoint = new Vector2(-13.12f, 0.320726f);
 
@@ -68,7 +69,6 @@ public class PlayerController : MonoBehaviour
         if (other.tag == "collectable")
         {
             Destroy(other.gameObject); //usuniecie obiektu
-            //++ects; //dodanie punktu
             ects = ects + pointValue * pointMultiplier; // dodanie punktu
             soundPoint.Play(); //odtworzenie dzwieku
             UpdateStatusBar(); //aktualizacja UI
@@ -86,21 +86,45 @@ public class PlayerController : MonoBehaviour
                 Destroy(other.gameObject); //usuniecie obiektu
             }
         }
-        
+
         //kolizja z obiektem z tagiem "checkpoint"
         if (other.gameObject.tag == "checkpoint")
         {
             soundCheckpoint.Play();
             other.GetComponent<Animator>().SetTrigger("saved");
-           cp.SaveGame();
+            cp.SaveGame();
         }
 
         //kolizja z obiektem z tagiem "powerup"
-        if (other.gameObject.tag == "powerup")
+        if (other.gameObject.tag == "multiplier")
         {
             Destroy(other.gameObject); //usuniecie obiektu
             soundPowerUp.Play();
-            StartCoroutine(IPowerUp());
+            StartCoroutine(IMultiplier());
+        }
+
+        //kolizja z obiektem z tagiem "speedup"
+        if (other.gameObject.tag == "speedup")
+        {
+            Destroy(other.gameObject); //usuniecie obiektu
+            soundPowerUp.Play();
+            StartCoroutine(ISpeedUp());
+        }
+
+        //kolizja z obiektem z tagiem "immortality"
+        if (other.gameObject.tag == "immortality")
+        {
+            Destroy(other.gameObject); //usuniecie obiektu
+            soundPowerUp.Play();
+            StartCoroutine(IImmortal());
+        }
+
+        //kolizja z obiektem z tagiem "superjump"
+        if (other.gameObject.tag == "superjump")
+        {
+            Destroy(other.gameObject); //usuniecie obiektu
+            soundPowerUp.Play();
+            StartCoroutine(ISuperJump());
         }
     }
 
@@ -114,26 +138,29 @@ public class PlayerController : MonoBehaviour
             if (state == State.falling && enemy.transform.position.y < this.transform.position.y - .5f)
             {
                 //kiedy zaatakujemy enemy od gory
-                enemy.JumpedOn(); 
+                enemy.JumpedOn();
                 Jump(); //podskok po zabiciu enemy
             }
             else
             {
-                //kiedy wpadniemy na enemy z boku
-                if (state != State.hurt)
+                if (!immortal)
                 {
-                    state = State.hurt;
-                    //odrzucenie w kierunku przeciwnym do enemy
-                    if (other.gameObject.transform.position.x > transform.position.x)
+                    //kiedy wpadniemy na enemy z boku
+                    if (state != State.hurt)
                     {
-                        rb.velocity = new Vector2(-hurtForce, rb.velocity.y);
+                        state = State.hurt;
+                        //odrzucenie w kierunku przeciwnym do enemy
+                        if (other.gameObject.transform.position.x > transform.position.x)
+                        {
+                            rb.velocity = new Vector2(-hurtForce, rb.velocity.y);
+                        }
+                        else
+                        {
+                            rb.velocity = new Vector2(hurtForce, rb.velocity.y);
+                        }
                     }
-                    else
-                    {
-                        rb.velocity = new Vector2(hurtForce, rb.velocity.y);
-                    }
+                    Damage(1);
                 }
-                Damage(1);
             }
         }
     }
@@ -209,7 +236,7 @@ public class PlayerController : MonoBehaviour
             tHP.text += "♥ ";
         }
         tPoints.text = ects.ToString();
-        tMultiplier.text = "x" + pointMultiplier.ToString(); 
+        tMultiplier.text = "x" + pointMultiplier.ToString();
     }
 
     public void Damage(int hp)
@@ -233,12 +260,12 @@ public class PlayerController : MonoBehaviour
             --ects;
             UpdateStatusBar();
             transform.position = spawnPoint;
-            
+
             cp.LoadGame();
         }
     }
 
-    IEnumerator IPowerUp()
+    IEnumerator IMultiplier()
     {
         pointMultiplier = 2; //ustawienie mnoznika punktow
         UpdateStatusBar(); //aktualizacja UI
@@ -248,6 +275,34 @@ public class PlayerController : MonoBehaviour
 
         pointMultiplier = 1; //powrot do poprzedniej wartosci
         UpdateStatusBar(); //aktualizacja UI
+    }
+
+    IEnumerator ISpeedUp()
+    {
+        runningSpeed = 11f; //zmiana szybkosci poruszania
+
+        //przyspieszenie jest aktywne przez okreslona ilosc sekund (zmienna "powerUpDuration")
+        yield return new WaitForSeconds(powerUpDuration);
+
+        runningSpeed = 7f; //powrot do poprzedniej wartosci
+    }
+
+    IEnumerator IImmortal()
+    {
+        //czasowe ustawienie niesmiertelosci gracza
+        immortal = true;
+        yield return new WaitForSeconds(powerUpDuration);
+
+        immortal = false; //powrot do poprzedniego stanu
+    }
+
+    IEnumerator ISuperJump()
+    {
+        //czasowe wlaczenie wyzszego skoku
+        jumpForce = 25f;
+        yield return new WaitForSeconds(powerUpDuration);
+
+        jumpForce = 18f; //powrot do poprzedniej wartosci
     }
 
     public void setState(int s)
@@ -262,6 +317,11 @@ public class PlayerController : MonoBehaviour
     public int getECTS()
     {
         return ects;
+    }
+
+    public bool getImmortalInfo()
+    {
+        return immortal;
     }
 
     //metody odtwarzające dźwięki używane w eventach animacji

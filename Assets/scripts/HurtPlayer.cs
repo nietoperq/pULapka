@@ -11,8 +11,12 @@ public class HurtPlayer : MonoBehaviour
         if (other.gameObject.tag == "player")
         {
             PlayerController player = other.gameObject.GetComponent<PlayerController>();
-            player.setState(4); //state 4 = hurt
-            player.Damage(damage);
+
+            if (!player.getImmortalInfo())
+            {
+                player.setState(4); //state 4 = hurt
+                player.Damage(damage);
+            }
         }
     }
 

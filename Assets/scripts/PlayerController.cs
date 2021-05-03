@@ -21,7 +21,6 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask ground;
     [SerializeField] private LayerMask paperplane;
     [SerializeField] private Text tPoints;
-    [SerializeField] private Text tHP;
     [SerializeField] private Text tMultiplier;
 
     private enum State { idle, running, jumping, falling, hurt, death };
@@ -38,6 +37,8 @@ public class PlayerController : MonoBehaviour
     private bool immortal = false; //niesmiertelnosc - domyslnie wylaczona
 
     private Vector2 spawnPoint = new Vector2(-13.12f, 0.320726f);
+
+    public HealthBar healthBar;
 
 
     private void Start()
@@ -63,7 +64,7 @@ public class PlayerController : MonoBehaviour
         AnimationState();
         anim.SetInteger("state", (int)state);
     }
-
+  
     private void OnTriggerEnter2D(Collider2D other)
     {
         //kolizja z obiektem z tagiem "collectable"
@@ -231,11 +232,7 @@ public class PlayerController : MonoBehaviour
 
     private void UpdateStatusBar()
     {
-        tHP.text = "";
-        for (int i = 0; i < health; i++)
-        {
-            tHP.text += "♥ ";
-        }
+        healthBar.SetHealth(health);
         tPoints.text = ects.ToString();
         tMultiplier.text = "x" + pointMultiplier.ToString();
     }
@@ -305,6 +302,7 @@ public class PlayerController : MonoBehaviour
 
         jumpForce = 18f; //powrot do poprzedniej wartosci
     }
+
 
     public void setState(int s)
     {

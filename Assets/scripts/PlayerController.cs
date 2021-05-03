@@ -22,6 +22,7 @@ public class PlayerController : MonoBehaviour
     [SerializeField] private LayerMask paperplane;
     [SerializeField] private Text tPoints;
     [SerializeField] private Text tMultiplier;
+    [SerializeField] private Text tPowerUp;
 
     private enum State { idle, running, jumping, falling, hurt, death };
     private State state = State.idle;
@@ -39,7 +40,6 @@ public class PlayerController : MonoBehaviour
     private Vector2 spawnPoint = new Vector2(-13.12f, 0.320726f);
 
     public HealthBar healthBar;
-
 
     private void Start()
     {
@@ -266,41 +266,51 @@ public class PlayerController : MonoBehaviour
     IEnumerator IMultiplier()
     {
         pointMultiplier = 2; //ustawienie mnoznika punktow
+        tMultiplier.color = Color.yellow;
         UpdateStatusBar(); //aktualizacja UI
 
         //mnoznik punktow jest aktywny okreslona ilosc sekund (zmienna "powerUpDuration")
         yield return new WaitForSeconds(powerUpDuration);
 
         pointMultiplier = 1; //powrot do poprzedniej wartosci
+        tMultiplier.color = Color.white;
         UpdateStatusBar(); //aktualizacja UI
     }
 
     IEnumerator ISpeedUp()
     {
         runningSpeed = 11f; //zmiana szybkosci poruszania
+        tPowerUp.text = "Speed Up";
 
         //przyspieszenie jest aktywne przez okreslona ilosc sekund (zmienna "powerUpDuration")
         yield return new WaitForSeconds(powerUpDuration);
 
         runningSpeed = 7f; //powrot do poprzedniej wartosci
+        tPowerUp.text = "";
     }
 
     IEnumerator IImmortal()
     {
         //czasowe ustawienie niesmiertelosci gracza
         immortal = true;
+        Color oldColor = healthBar.GetComponentInChildren<Image>().color; //zapis poprzedniego koloru healthBar'a
+        healthBar.GetComponentInChildren<Image>().color = Color.green; //ustawienie nowego koloru
+
         yield return new WaitForSeconds(powerUpDuration);
 
         immortal = false; //powrot do poprzedniego stanu
+        healthBar.GetComponentInChildren<Image>().color = oldColor; //ustawienie poprzedniego koloru
     }
 
     IEnumerator ISuperJump()
     {
         //czasowe wlaczenie wyzszego skoku
         jumpForce = 25f;
+        tPowerUp.text = "Super Jump";
         yield return new WaitForSeconds(powerUpDuration);
 
         jumpForce = 18f; //powrot do poprzedniej wartosci
+        tPowerUp.text = "";
     }
 
 

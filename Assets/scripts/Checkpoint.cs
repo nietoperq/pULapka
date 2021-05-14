@@ -15,12 +15,15 @@ public class Checkpoint : MonoBehaviour
         {
             System.Array.Clear(obj, 0, obj.Length);
         }
+        //tablica przechowujaca wszystkie obiekty
         obj = GameObject.FindObjectsOfType(typeof(GameObject));
         foreach (object o in obj)
         {
             GameObject g = (GameObject)o;
             if (g.activeInHierarchy)
             {
+                //dla kazdego aktywnego obiektu sprawdzamy tag (tagi te opisuja rozne typy obiektow, ktore w jakis sposob znikaja z planszy)
+                //wszystkie te obiekty zapisujemy do PlayerPrefs, aby moc je potem zaladowac
                 if (g.tag == "collectable" || g.tag == "enemy" || g.tag == "healthpotion" || g.tag == "powerup")
                 {
                     //zapisywanie obiektow 
@@ -52,12 +55,13 @@ public class Checkpoint : MonoBehaviour
                 {
                     if (!PlayerPrefs.HasKey(g.name))
                     {
-                        //usuwanie obiektow ktorych nie ma na liscie zapisanych obiektow
+                        //jezeli obiekt nie jest zapisany w PlayerPrefs, to znaczy, ze w chwili zapisu nie byl aktywny, a wiec usuwamy go z planszy, aby przywrocic stan z momentu zapisu
                         Destroy(g);
                     }
                 }
                 if (g.tag == "player")
                 {
+                    //ustawiamy pozycje gracza na pozycje ostatniego zapisu
                     float posX = PlayerPrefs.GetFloat("PlayerPositionX");
                     float posY = PlayerPrefs.GetFloat("PlayerPositionY");
                     g.transform.position = new Vector2(posX, posY + 1);

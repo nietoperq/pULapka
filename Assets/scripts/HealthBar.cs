@@ -9,6 +9,7 @@ public class HealthBar : MonoBehaviour
     
     public void SetHealth(int health)
     {
+        //ustawienie wartosci paska zycia na wartosc zycia gracza
         slider.value = health;
     }
 }

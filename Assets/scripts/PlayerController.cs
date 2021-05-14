@@ -11,35 +11,35 @@ public class PlayerController : MonoBehaviour
     private Collider2D coll;
     private Checkpoint cp;
 
-    [SerializeField] private AudioSource soundPoint;
-    [SerializeField] private AudioSource soundFootstep;
-    [SerializeField] private AudioSource soundHurt;
-    [SerializeField] private AudioSource soundJump;
-    [SerializeField] private AudioSource soundHPotion;
-    [SerializeField] private AudioSource soundPowerUp;
-    [SerializeField] private AudioSource soundCheckpoint;
-    [SerializeField] private LayerMask ground;
-    [SerializeField] private LayerMask paperplane;
-    [SerializeField] private Text tPoints;
-    [SerializeField] private Text tMultiplier;
-    [SerializeField] private Text tPowerUp;
+    [SerializeField] private AudioSource soundPoint; //dzwiek zebrania punktu
+    [SerializeField] private AudioSource soundFootstep; //dzwiek krokow
+    [SerializeField] private AudioSource soundHurt; //dzwiek ponoszenia obrazen
+    [SerializeField] private AudioSource soundJump; //dzwiek skoku
+    [SerializeField] private AudioSource soundHPotion; //dzwiek zebrania jedzenia przywracajacego zycie
+    [SerializeField] private AudioSource soundPowerUp; //dzwiek zebrania ulepszenia
+    [SerializeField] private AudioSource soundCheckpoint; //dzwiek zapisu przy checkpoincie
+    [SerializeField] private LayerMask ground; //warstwa zawierajaca elementy, po ktorych gracz moze chodzic i po ktorych moze skakac
+    [SerializeField] private LayerMask paperplane; //warstwa zawierajaca latajace papierowe samoloty
+    [SerializeField] private Text tPoints; //pole tekstowe pokazujace ilosc punktow
+    [SerializeField] private Text tMultiplier; //pole tekstowe pokazujace mnoznik punktow (podwaja sie przy zebraniu ulepszenia)
+    [SerializeField] private Text tPowerUp; //pole tekstowe pokazujace aktywne ulepszenie 
 
-    private enum State { idle, running, jumping, falling, hurt, death };
-    private State state = State.idle;
+    private enum State { idle, running, jumping, falling, hurt, death }; //stany animacji
+    private State state = State.idle; //domyslny stan - idle
 
-    private float runningSpeed = 7f;
-    private float jumpForce = 18f;
-    private float hurtForce = 10f;
-    private int ects;
-    private int pointValue = 1;
-    private int pointMultiplier = 1;
-    private int health;
-    private float powerUpDuration = 8f;
+    private float runningSpeed = 7f; //predkosc biegu
+    private float jumpForce = 18f; //sila skoku
+    private float hurtForce = 10f; //sila odrzutu przy otrzymaniu obrazen
+    private int ects; //liczba punktow 
+    private int pointValue = 1; 
+    private int pointMultiplier = 1; //mnoznik punktow
+    private int health; //ilosc zycia
+    private float powerUpDuration = 8f; //czas trwania ulepszenia
     private bool immortal = false; //niesmiertelnosc - domyslnie wylaczona
 
-    private Vector2 spawnPoint = new Vector2(-13.12f, 0.320726f);
+    private Vector2 spawnPoint = new Vector2(-13.12f, 0.320726f); //lokalizacja gracza w momencie rozpoczecia gry
 
-    public HealthBar healthBar;
+    public HealthBar healthBar; //pasek zycia
 
     private void Start()
     {
@@ -169,6 +169,7 @@ public class PlayerController : MonoBehaviour
 
     private void Movement()
     {
+        //ruch gracza
         float horizontalDirection = Input.GetAxisRaw("Horizontal");
         if (horizontalDirection < 0)
         {
@@ -189,6 +190,7 @@ public class PlayerController : MonoBehaviour
 
     private void Jump()
     {
+        //skok
         soundJump.Play();
         rb.velocity = new Vector2(rb.velocity.x, jumpForce);
         state = State.jumping;
@@ -196,6 +198,7 @@ public class PlayerController : MonoBehaviour
 
     private void AnimationState()
     {
+        //zmiana stanu animacji
         if (state == State.jumping)
         {
             if (rb.velocity.y < 2f)
@@ -226,12 +229,14 @@ public class PlayerController : MonoBehaviour
 
     IEnumerator Recover()
     {
+        //odczekanie pewnego czasu po otrzymaniu obrazenia przed powrotem do normalnego stanu
         yield return new WaitForSeconds(0.5f);
         state = State.idle;
     }
 
     private void UpdateStatusBar()
     {
+        //zaaktualizowanie informacji w UI - zycia, punktow i mnoznika puntkow
         healthBar.SetHealth(health);
         tPoints.text = ects.ToString();
         tMultiplier.text = "x" + pointMultiplier.ToString();
@@ -239,6 +244,7 @@ public class PlayerController : MonoBehaviour
 
     public void Damage(int hp)
     {
+        //zadanie obrazen graczowi
         health -= hp;
         UpdateStatusBar();
         StartCoroutine(IDamage());
@@ -314,6 +320,7 @@ public class PlayerController : MonoBehaviour
     }
 
 
+    //settery i gettery do wykorzystywania w innych skryptach
     public void setState(int s)
     {
         state = (State)s;

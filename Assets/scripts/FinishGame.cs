@@ -27,6 +27,7 @@ public class FinishGame : MonoBehaviour
 
     IEnumerator IFinishGame()
     {
+        //przy zakonczeniu gry odtwarzamy dzwiek, zwalniamy czas do 50% i po odczekaniu sekundy pokazujemy ekran koncowy z wynikiem
         winSound.Play();
         Time.timeScale = 0.5f;
         yield return new WaitForSeconds(1);

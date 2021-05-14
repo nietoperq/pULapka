@@ -15,9 +15,9 @@ public class PauseMenu : MonoBehaviour
         Time.timeScale = 1f;
     }
 
-    // Update is called once per frame
     void Update()
     {
+        //wlaczenie menu klawiszem ESC
         if (Input.GetKeyDown(KeyCode.Escape))
         {
             if (GameIsPaused)
@@ -33,6 +33,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Resume()
     {
+        //wylaczenie ekranu menu, ustawienie predkosci czasu na 100%
         pauseMenuUI.SetActive(false);
         Time.timeScale = 1f;
         GameIsPaused = false;
@@ -40,6 +41,7 @@ public class PauseMenu : MonoBehaviour
 
     public void Pause()
     {
+        //wlaczenie ekranu menu, ustawienie predkosci czasu na 0% (wszystkie aktywnosci w grze sa zatrzymane)
         pauseMenuUI.SetActive(true);
         Time.timeScale = 0f;
         GameIsPaused = true;
@@ -47,11 +49,13 @@ public class PauseMenu : MonoBehaviour
 
     public void GoToMainMenu()
     {
+        //przejscie do sceny z menu glownym
         SceneManager.LoadScene(SceneManager.GetActiveScene().buildIndex - 1);
     }
 
     public void QuitGame()
     {
+        //wyjscie z gry
         Debug.Log("Quitting...");
         Application.Quit();
     }
